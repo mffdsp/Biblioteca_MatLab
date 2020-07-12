@@ -1,0 +1,12 @@
+-- 11/07
+  * Instalação Matlab
+  * Revisão do código
+  
+-- 12/07
+  * Revisão de funções especificas, ex. prisma.
+  * Criação de Mesa
+  * Opção para 1 ou 4 'pés'
+  
+-- 13/07
+  * Cadeira
+ 
