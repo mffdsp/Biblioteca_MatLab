@@ -11,15 +11,18 @@ nElTableOx=str2double(get(handles.tElTableOx,'String'));
 nElTableOy=str2double(get(handles.tElTableOy,'String'));
 nElTableOz=str2double(get(handles.tElTableOz,'String'));
 
-nElTableSizeX=str2double('2');
-nElTableSizeY=str2double('2');
+nElTableXdist=str2double(get(handles.tElTableXdist,'String'));
+nElTableYdist=str2double(get(handles.tElTableYdist,'String'));
+
+nElTableSizeX=nElTableXdist/2;
+nElTableSizeY=nElTableYdist/2;
 nElTableSizeZ=str2double('0.2');
 
 aOrigin=[nElTableOx nElTableOy nElTableOz];
 aDist=[nElTableSizeX nElTableSizeY nElTableSizeZ];
 
 %Cria o Elemento
-[aPlane]=fCreateTable(aOrigin,aDist);
+[aPlane]=fCreateTable(aOrigin,0,aDist);
 
 %Cria elemento da base
 
@@ -33,13 +36,13 @@ aPeOrigin3=[nElTableOx, nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
 aPeOrigin4=[nElTableOx + nElTableSizeX - nElTableSizeZ,  nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
 
 %central
-[aPe]=fCreateTableBase(aPeOrigin,[0.2, 0.2 , nElTableOz]);
+[aPe]=fCreateTable(aPeOrigin,0,[0.2, 0.2 , nElTableOz]);
 
 %Padrão
-[aPe1]=fCreateTableBase(aPeOrigin1,[0.2, 0.2 , nElTableOz]);
-[aPe2]=fCreateTableBase(aPeOrigin2,[0.2, 0.2 , nElTableOz]);
-[aPe3]=fCreateTableBase(aPeOrigin3,[0.2, 0.2 , nElTableOz]);
-[aPe4]=fCreateTableBase(aPeOrigin4,[0.2, 0.2 , nElTableOz]);
+[aPe1]=fCreateTable(aPeOrigin1,0,[0.2, 0.2 , nElTableOz]);
+[aPe2]=fCreateTable(aPeOrigin2,0,[0.2, 0.2 , nElTableOz]);
+[aPe3]=fCreateTable(aPeOrigin3,0,[0.2, 0.2 , nElTableOz]);
+[aPe4]=fCreateTable(aPeOrigin4,0,[0.2, 0.2 , nElTableOz]);
 
 % Identifica planos a serem visualizados 
 
@@ -51,20 +54,20 @@ aPlanePrev = tPlanIdentifier(aPlane, true, true, true);
 aPePrev=[];
 aPePrev = tPlanIdentifier(aPe, true, false, true);
 
-% aPePrev1 = [];
-% aPePrev2 = [];
-% aPePrev3 = [];
-% aPePrev4 = [];
-% 
-% aPePrev1 = tPlanIdentifier(aPe1);
-% aPePrev2 = tPlanIdentifier(aPe2);
-% aPePrev3 = tPlanIdentifier(aPe3);
-% aPePrev4 = tPlanIdentifier(aPe4);
+aPePrev1 = [];
+aPePrev2 = [];
+aPePrev3 = [];
+aPePrev4 = [];
+
+aPePrev1 = tPlanIdentifier(aPe1, true, false, true);
+aPePrev2 = tPlanIdentifier(aPe2, true, false, true);
+aPePrev3 = tPlanIdentifier(aPe3, true, false, true);
+aPePrev4 = tPlanIdentifier(aPe4, true, false, true);
 
 %pre
 nRoom=str2double(get(handles.tRoomNum,'String'));
 nSizePlanes=size(aPlanePrev,1);
-nSizePlanes2=size(aPePrev,1);
+nSizePlanes2=size(aPePrev1,1);
 
 %Verifica a qual grupo pertencerá os novos planos
 aDataPoins=get(handles.tTablePlanes,'Data');
@@ -87,8 +90,9 @@ for nP=1:nSizePlanes
 end
 
 nSizePlanesNew2=0;
+
 for nP=1:nSizePlanes2
-    aVert=aPePrev(nP,:);
+    aVert=aPePrev1(nP,:);
     
     % Verifica se o plano possui area
     nW1=(((aVert{2}(2)-aVert{1}(2))*(aVert{3}(3)-aVert{1}(3)))-((aVert{3}(2)-aVert{1}(2))*(aVert{2}(3)-aVert{1}(3))));
@@ -99,6 +103,45 @@ for nP=1:nSizePlanes2
         fPutNewSinglePlane(nRoom,aVert,get(handles.ttElPrismElementName,'String'),nGroup);
         nSizePlanesNew2=nSizePlanesNew2+1;
     end
+    
+    aVert=aPePrev2(nP,:);
+    
+    % Verifica se o plano possui area
+    nW1=(((aVert{2}(2)-aVert{1}(2))*(aVert{3}(3)-aVert{1}(3)))-((aVert{3}(2)-aVert{1}(2))*(aVert{2}(3)-aVert{1}(3))));
+    nW2=(((aVert{3}(1)-aVert{1}(1))*(aVert{2}(3)-aVert{1}(3)))-((aVert{2}(1)-aVert{1}(1))*(aVert{3}(3)-aVert{1}(3))));
+    nW3=(((aVert{2}(1)-aVert{1}(1))*(aVert{3}(2)-aVert{1}(2)))-((aVert{3}(1)-aVert{1}(1))*(aVert{2}(2)-aVert{1}(2))));
+    nR=sqrt(nW1*nW1+nW2*nW2+nW3*nW3);
+    if nR~=0 %Não Colineares 
+        fPutNewSinglePlane(nRoom,aVert,get(handles.ttElPrismElementName,'String'),nGroup);
+        nSizePlanesNew2=nSizePlanesNew2+1;
+    end
+    
+    aVert=aPePrev3(nP,:);
+    
+    % Verifica se o plano possui area
+    nW1=(((aVert{2}(2)-aVert{1}(2))*(aVert{3}(3)-aVert{1}(3)))-((aVert{3}(2)-aVert{1}(2))*(aVert{2}(3)-aVert{1}(3))));
+    nW2=(((aVert{3}(1)-aVert{1}(1))*(aVert{2}(3)-aVert{1}(3)))-((aVert{2}(1)-aVert{1}(1))*(aVert{3}(3)-aVert{1}(3))));
+    nW3=(((aVert{2}(1)-aVert{1}(1))*(aVert{3}(2)-aVert{1}(2)))-((aVert{3}(1)-aVert{1}(1))*(aVert{2}(2)-aVert{1}(2))));
+    nR=sqrt(nW1*nW1+nW2*nW2+nW3*nW3);
+    if nR~=0 %Não Colineares 
+        fPutNewSinglePlane(nRoom,aVert,get(handles.ttElPrismElementName,'String'),nGroup);
+        nSizePlanesNew2=nSizePlanesNew2+1;
+    end
+    
+    aVert=aPePrev4(nP,:);
+    
+    % Verifica se o plano possui area
+    nW1=(((aVert{2}(2)-aVert{1}(2))*(aVert{3}(3)-aVert{1}(3)))-((aVert{3}(2)-aVert{1}(2))*(aVert{2}(3)-aVert{1}(3))));
+    nW2=(((aVert{3}(1)-aVert{1}(1))*(aVert{2}(3)-aVert{1}(3)))-((aVert{2}(1)-aVert{1}(1))*(aVert{3}(3)-aVert{1}(3))));
+    nW3=(((aVert{2}(1)-aVert{1}(1))*(aVert{3}(2)-aVert{1}(2)))-((aVert{3}(1)-aVert{1}(1))*(aVert{2}(2)-aVert{1}(2))));
+    nR=sqrt(nW1*nW1+nW2*nW2+nW3*nW3);
+    if nR~=0 %Não Colineares 
+        fPutNewSinglePlane(nRoom,aVert,get(handles.ttElPrismElementName,'String'),nGroup);
+        nSizePlanesNew2=nSizePlanesNew2+1;
+    end
+    
+    
+    
 end
 
 %Atualiza a exibição com os novos planos criados

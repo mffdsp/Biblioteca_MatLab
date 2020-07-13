@@ -11,15 +11,18 @@ nElTableOx=str2double(get(handles.tElTableOx,'String'));
 nElTableOy=str2double(get(handles.tElTableOy,'String'));
 nElTableOz=str2double(get(handles.tElTableOz,'String'));
 
-nElTableSizeX=str2double('2');
-nElTableSizeY=str2double('2');
+nElTableXdist=str2double(get(handles.tElTableXdist,'String'));
+nElTableYdist=str2double(get(handles.tElTableYdist,'String'));
+
+nElTableSizeX=nElTableXdist/2;
+nElTableSizeY=nElTableYdist/2;
 nElTableSizeZ=str2double('0.2');
 
 aOrigin=[nElTableOx nElTableOy nElTableOz];
 aDist=[nElTableSizeX nElTableSizeY nElTableSizeZ];
 
 %Cria o Elemento
-[aPlane]=fCreateTable(aOrigin,aDist);
+[aPlane]=fCreateTable(aOrigin,0,aDist);
 
 %Cria elemento da base
 
@@ -33,13 +36,13 @@ aPeOrigin3=[nElTableOx, nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
 aPeOrigin4=[nElTableOx + nElTableSizeX - nElTableSizeZ,  nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
 
 %central
-[aPe]=fCreateTableBase(aPeOrigin,[0.2, 0.2 , nElTableOz]);
+[aPe]=fCreateTable(aPeOrigin,0,[0.2, 0.2 , nElTableOz]);
 
 %Padrão
-[aPe1]=fCreateTableBase(aPeOrigin1,[0.2, 0.2 , nElTableOz]);
-[aPe2]=fCreateTableBase(aPeOrigin2,[0.2, 0.2 , nElTableOz]);
-[aPe3]=fCreateTableBase(aPeOrigin3,[0.2, 0.2 , nElTableOz]);
-[aPe4]=fCreateTableBase(aPeOrigin4,[0.2, 0.2 , nElTableOz]);
+[aPe1]=fCreateTable(aPeOrigin1,0,[0.2, 0.2 , nElTableOz]);
+[aPe2]=fCreateTable(aPeOrigin2,0,[0.2, 0.2 , nElTableOz]);
+[aPe3]=fCreateTable(aPeOrigin3,0,[0.2, 0.2 , nElTableOz]);
+[aPe4]=fCreateTable(aPeOrigin4,0,[0.2, 0.2 , nElTableOz]);
 
 % Identifica planos a serem visualizados 
 
