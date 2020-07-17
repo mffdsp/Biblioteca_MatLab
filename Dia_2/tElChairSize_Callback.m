@@ -10,38 +10,66 @@ function tElChairSize_Callback(hObject, eventdata, handles)
 % Traz Dados 
 nElTableOx=str2double(get(handles.tElChairOx,'String'));
 nElTableOy=str2double(get(handles.tElChairOy,'String'));
-nElTableOz=str2double(get(handles.tElChairOz,'String'));
+nElTableDistZ=str2double(get(handles.tElChairOz,'String'));
 
 nElTableSizeX=str2double('0.8');
 nElTableSizeY=str2double('0.8');
 nElTableSizeZ=str2double('0.1');
 
+aAngle_dot = str2double(get(handles.tElChairAngle,'String'));
+
+nElTableOx=nElTableOx*cos(0)+nElTableOy*(-sin(0));
+nElTableOy=nElTableOx*sin(0)+nElTableOy*cos(0);
+nElTableOz=0; 
+
 aOrigin=[nElTableOx nElTableOy nElTableOz];
-aDist=[nElTableSizeX nElTableSizeY nElTableSizeZ];
+aDist=[nElTableSizeX nElTableSizeY 0.2];
+
 
 %Cria o Elemento
-[aPlane]=fCreateTable(aOrigin,aDist);
+[aPlane]=fCreateTable([nElTableOx nElTableOy nElTableOz+nElTableDistZ],0,aDist);
 
 %Caso tenha 4 bases
-aPeOrigin1=[nElTableOx nElTableOy 0];
-aPeOrigin2=[nElTableOx + nElTableSizeX - nElTableSizeZ, nElTableOy, 0];
-aPeOrigin3=[nElTableOx, nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
-aPeOrigin4=[nElTableOx + nElTableSizeX - nElTableSizeZ,  nElTableOy + nElTableSizeY - nElTableSizeZ, 0];
+aPeOrigin1=[nElTableOx nElTableOy nElTableOz];
+aPeOrigin2=[nElTableOx + nElTableSizeX - nElTableSizeZ, nElTableOy, nElTableOz];
+aPeOrigin3=[nElTableOx, nElTableOy + nElTableSizeY - nElTableSizeZ, nElTableOz];
+aPeOrigin4=[nElTableOx + nElTableSizeX - nElTableSizeZ,  nElTableOy + nElTableSizeY - nElTableSizeZ, nElTableOz];
 
-%cria a costa
-aCostaOrigin=[nElTableOx, nElTableOy, nElTableOz + nElTableSizeZ];
+%cria a costs
+
+%Posição
+if aAngle_dot < 1 || aAngle_dot > 4
+    nElTableSizeX = 0.1;
+end
+if aAngle_dot == 1
+    nElTableSizeX = 0.1;
+end
+if aAngle_dot == 2
+    nElTableOy = nElTableOy + nElTableSizeY - 0.1;
+    nElTableSizeY = 0.1;
+end
+if aAngle_dot == 3
+    nElTableSizeY = 0.1;
+end
+if aAngle_dot == 4
+    nElTableOx = nElTableOx + nElTableSizeX - 0.1;
+    nElTableSizeX = 0.1;
+end
+
+aCostaOrigin=[nElTableOx, nElTableOy, nElTableSizeZ*2+nElTableDistZ];
 
 %Padrão
-[aPe1]=fCreateTableBase(aPeOrigin1,[0.1, 0.1 , nElTableOz]);
-[aPe2]=fCreateTableBase(aPeOrigin2,[0.1, 0.1 , nElTableOz]);
-[aPe3]=fCreateTableBase(aPeOrigin3,[0.1, 0.1 , nElTableOz]);
-[aPe4]=fCreateTableBase(aPeOrigin4,[0.1, 0.1 , nElTableOz]);
-[aCosta]=fCreateTable(aCostaOrigin,[nElTableSizeX, 0.1, nElTableOz + 0.2]);
+[aPe1]=fCreateTable(aPeOrigin1,0,[0.1, 0.1 , nElTableDistZ]);
+[aPe2]=fCreateTable(aPeOrigin2,0,[0.1, 0.1 , nElTableDistZ]);
+[aPe3]=fCreateTable(aPeOrigin3,0,[0.1, 0.1 , nElTableDistZ]);
+[aPe4]=fCreateTable(aPeOrigin4,0,[0.1, 0.1 , nElTableDistZ]);
+
+[aCosta]=fCreateTable(aCostaOrigin,0,[nElTableSizeX, nElTableSizeY, nElTableDistZ + 0.2]);
 
 % Identifica planos a serem visualizados 
 
 aCostaPrev=[];
-aCostaPrev = tPlanIdentifier(aCosta, false, true, true);
+aCostaPrev = tPlanIdentifier(aCosta, true, true, true);
 
 aPlanePrev=[];
 aPlanePrev = tPlanIdentifier(aPlane, true, true, true);
