@@ -7,7 +7,7 @@ Códigos nas pastas 'dia_1_2'
 
 <li>A cadeira tem variáveis de posição, altura e 4 variações de ângulo.</li>
 
-<li>O armário tem variáveis de posição, altura e quantidade de prateleiras. Lembrando q um plano lateral é aberto.</li>
+<li>O armário tem variáveis de posição, altura e quantidade de prateleiras. Lembrando que, um plano lateral é aberto.</li>
 
 </ul>
 </h3>
